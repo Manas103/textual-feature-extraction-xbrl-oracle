@@ -1,0 +1,17 @@
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+pytest_run.log
+
+# Regenerate with: python scripts/download_data.py
+# (downloads the 4 real SEC quarterly bulk zips, about 2.5 GB extracted)
+data/raw/
+
+# Regenerate with: python scripts/build.py
+# (builds data/featurex.duckdb from data/raw/, several hundred MB)
+data/featurex.duckdb
+
+# Regenerate with: python scripts/run_measurements.py
+# (writes data/reconciled.parquet, the full reconciliation table, tens of MB)
+data/reconciled.parquet

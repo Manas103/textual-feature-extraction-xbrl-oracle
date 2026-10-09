@@ -1,0 +1,21 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Manas\Downloads\Auto Job Applier\Total Job Application process flow\projects\textual-feature-extraction-xbrl-oracle\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Manas\Downloads\Auto Job Applier\Total Job Application process flow
+configfile: pytest.ini
+collecting ... collected 12 items
+
+tests\test_real_data.py::test_scale_claim PASSED                         [  8%]
+tests\test_real_data.py::test_point_in_time_claim PASSED                 [ 16%]
+tests\test_real_data.py::test_oracle_is_deterministic PASSED             [ 25%]
+tests\test_real_data.py::test_every_disagreement_has_a_cause PASSED      [ 33%]
+tests\test_real_data.py::test_field_agreement_is_measured_not_assumed PASSED [ 41%]
+tests\test_reconcile_synthetic.py::test_each_cause_fires_on_the_filing_built_for_it PASSED [ 50%]
+tests\test_reconcile_synthetic.py::test_every_row_has_oracle_ground_truth PASSED [ 58%]
+tests\test_text_rules.py::test_total_revenue_matches_bare_and_total_forms PASSED [ 66%]
+tests\test_text_rules.py::test_net_income_matches_parenthetical_orderings PASSED [ 75%]
+tests\test_text_rules.py::test_total_stockholders_equity_matches_apostrophe_and_fund_vocabulary PASSED [ 83%]
+tests\test_text_rules.py::test_diluted_shares_outstanding_matches_without_requiring_weighted_average PASSED [ 91%]
+tests\test_text_rules.py::test_diluted_shares_outstanding_does_not_resolve_bare_diluted_label PASSED [100%]
+
+============================= 12 passed in 17.34s =============================

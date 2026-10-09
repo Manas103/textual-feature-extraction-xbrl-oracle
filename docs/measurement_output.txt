@@ -1,0 +1,98 @@
+=== scale ===
+{
+  "value": true,
+  "n_fields": 9,
+  "n_filings": 22387,
+  "quarters": [
+    "2025q3",
+    "2025q4",
+    "2026q1",
+    "2026q2"
+  ]
+}
+
+=== point_in_time ===
+{
+  "value": true,
+  "cutoff_timestamp": "2025-08-07 07:00:00",
+  "correct_filter_leaked_rows": 0,
+  "naive_filed_date_filter_leaked_rows": 623,
+  "naive_leaked_filings": 623
+}
+
+=== oracle_determinism ===
+{
+  "value": true,
+  "n_rows": 16263,
+  "field_checked": "total_revenue"
+}
+
+=== field_agreement ===
+{
+  "value": 85.7,
+  "agree": 136583,
+  "total": 159395,
+  "rate_pct": 85.688,
+  "attempts": 3
+}
+
+=== disagreement_classification ===
+{
+  "value": true,
+  "total_disagreements": 22812,
+  "classified": 22812,
+  "cause_counts": {
+    "label_not_matched": 15725,
+    "duration_mismatch": 3263,
+    "custom_tag_different_concept": 1920,
+    "unexplained_value_mismatch": 1879,
+    "sign_mismatch": 25
+  },
+  "causes_used": [
+    "custom_tag_different_concept",
+    "duration_mismatch",
+    "label_not_matched",
+    "sign_mismatch",
+    "unexplained_value_mismatch"
+  ]
+}
+
+=== per-field agreement ===
+                              sum  count  rate_pct
+field                                             
+cost_of_revenue              9339  10694      87.3
+diluted_shares_outstanding  13041  17374      75.1
+eps_diluted                 13477  18467      73.0
+net_income                  15817  21963      72.0
+operating_cash_flow         10297  11061      93.1
+total_assets                21917  22196      98.7
+total_liabilities           19544  19764      98.9
+total_revenue               14012  16263      86.2
+total_stockholders_equity   19139  21613      88.6
+
+=== sample disagreements, one per cause ===
+-- custom_tag_different_concept --
+                    adsh          field oracle_tag  oracle_value                          text_tag   text_value
+92  0000011544-26-000005  total_revenue   Revenues  1.470786e+10  RevenuesFromWhollyOwnedInvestees  577420000.0
+93  0000011544-26-000011  total_revenue   Revenues  3.690334e+09  RevenuesFromWhollyOwnedInvestees  156551000.0
+
+-- duration_mismatch --
+                    adsh          field oracle_tag  oracle_value                          text_tag   text_value
+90  0000011544-25-000024  total_revenue   Revenues  3.670808e+09  RevenuesFromWhollyOwnedInvestees  128839000.0
+91  0000011544-25-000032  total_revenue   Revenues  3.768236e+09  RevenuesFromWhollyOwnedInvestees  150335000.0
+
+-- label_not_matched --
+                   adsh          field oracle_tag  oracle_value text_tag  text_value
+4  0000002969-25-000044  total_revenue   Revenues  3.022700e+09      NaN         NaN
+5  0000002969-25-000055  total_revenue   Revenues  1.203730e+10      NaN         NaN
+
+-- sign_mismatch --
+                       adsh       field     oracle_tag  oracle_value                  text_tag  text_value
+30475  0001016281-25-000128  net_income  NetIncomeLoss     6570000.0  GainLossOnSaleOfBusiness  -6559000.0
+31185  0001091818-26-000044  net_income  NetIncomeLoss     -253478.0                ProfitLoss    253478.0
+
+-- unexplained_value_mismatch --
+                     adsh          field oracle_tag  oracle_value                                             text_tag    text_value
+175  0000021175-26-000011  total_revenue   Revenues  1.498900e+10  RevenueFromContractWithCustomerExcludingAssessedTax  1.577000e+09
+176  0000021175-26-000031  total_revenue   Revenues  3.677000e+09  RevenueFromContractWithCustomerExcludingAssessedTax  3.740000e+08
+
