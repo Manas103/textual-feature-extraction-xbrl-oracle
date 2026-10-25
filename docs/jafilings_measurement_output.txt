@@ -1,0 +1,28 @@
+{
+  "scale": {
+    "n_filings": 4800,
+    "n_issuers": 1100,
+    "n_fields": 5
+  },
+  "raw_agreement": {
+    "n_comparable": 24000,
+    "n_total": 24000,
+    "agree": 22122,
+    "rate_pct": 92.2
+  },
+  "refused_precision": {
+    "n_total": 24000,
+    "n_accepted": 18781,
+    "n_refused": 5219,
+    "n_accepted_but_incorrect": 1,
+    "coverage_pct": 78.3,
+    "precision_pct": 99.995
+  },
+  "translation_lag": {
+    "n_with_english_version": 1692,
+    "n_total_filings": 4800,
+    "english_version_rate_measured": 0.3525,
+    "median_lag_trading_days": 2.0,
+    "mean_lag_trading_days": 2.1317966903073287
+  }
+}

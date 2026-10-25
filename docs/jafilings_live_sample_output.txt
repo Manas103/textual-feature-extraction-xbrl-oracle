@@ -1,0 +1,167 @@
+{
+  "n_live_calls": 20,
+  "n_correct_field_identification": 20,
+  "accuracy_pct": 100.0,
+  "rows": [
+    {
+      "doc_id": "DOC-000000",
+      "intended_field": "net_sales",
+      "label_text": "売上収益",
+      "claude_identified_field": "net_sales",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000001",
+      "intended_field": "operating_income",
+      "label_text": "営業損益",
+      "claude_identified_field": "operating_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000002",
+      "intended_field": "net_income",
+      "label_text": "純利益",
+      "claude_identified_field": "net_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000003",
+      "intended_field": "total_assets",
+      "label_text": "資産合計",
+      "claude_identified_field": "total_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000004",
+      "intended_field": "net_assets",
+      "label_text": "純資産",
+      "claude_identified_field": "net_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000005",
+      "intended_field": "net_sales",
+      "label_text": "売上収益",
+      "claude_identified_field": "net_sales",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000006",
+      "intended_field": "operating_income",
+      "label_text": "営業損益",
+      "claude_identified_field": "operating_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000007",
+      "intended_field": "net_income",
+      "label_text": "当期純利益",
+      "claude_identified_field": "net_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000008",
+      "intended_field": "total_assets",
+      "label_text": "資産合計",
+      "claude_identified_field": "total_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000009",
+      "intended_field": "net_assets",
+      "label_text": "純資産",
+      "claude_identified_field": "net_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000010",
+      "intended_field": "net_sales",
+      "label_text": "売上高",
+      "claude_identified_field": "net_sales",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000011",
+      "intended_field": "operating_income",
+      "label_text": "営業利益",
+      "claude_identified_field": "operating_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000012",
+      "intended_field": "net_income",
+      "label_text": "当期純利益",
+      "claude_identified_field": "net_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": false
+    },
+    {
+      "doc_id": "DOC-000013",
+      "intended_field": "total_assets",
+      "label_text": "資産合計",
+      "claude_identified_field": "total_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000014",
+      "intended_field": "net_assets",
+      "label_text": "純資産",
+      "claude_identified_field": "net_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000015",
+      "intended_field": "net_sales",
+      "label_text": "売上収益",
+      "claude_identified_field": "net_sales",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000016",
+      "intended_field": "operating_income",
+      "label_text": "営業利益",
+      "claude_identified_field": "operating_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000017",
+      "intended_field": "net_income",
+      "label_text": "純利益",
+      "claude_identified_field": "net_income",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000018",
+      "intended_field": "total_assets",
+      "label_text": "総資産",
+      "claude_identified_field": "total_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    },
+    {
+      "doc_id": "DOC-000019",
+      "intended_field": "net_assets",
+      "label_text": "純資産合計",
+      "claude_identified_field": "net_assets",
+      "claude_correct": true,
+      "deterministic_matches_true_value": true
+    }
+  ]
+}

@@ -7,7 +7,16 @@ path looks the same concept up by its standard XBRL tag name alone, never touchi
 label. Python 3.12, DuckDB, pandas, pytest, over 22,387 real 10-Q and 10-K filings from
 SEC EDGAR's own bulk Financial Statement Data Sets. Every number below was measured on
 this machine by running the real code against real, downloaded SEC data, not targeted
-in advance.
+in advance. Extended (Oct. 2026, PanAgora Intern, Equity Team req) with `featurex_ja/`:
+an LLM-extraction reading of a Japanese issuer disclosure, audited against the filing's
+own real jp-gaap XBRL facts the same way the base repo audits a presentation label
+against a us-gaap tag, with a refusal rule that withholds any field the filing's own XBRL
+does not confirm. **This extension's real EDINET API access was blocked** (see
+`featurex_ja/config.py`); every number it reports below comes from a declared synthetic
+fixture and, for one explicitly marked sample, genuine live `claude -p` calls, not from
+real Japanese filings. That is the one place in this repository where "every number was
+measured on this machine" does not also mean "against real downloaded data," and it is
+disclosed here first rather than left for the Limitations section.
 
 ## Why this exists
 
@@ -50,6 +59,31 @@ rather than silently averaged away.
 - **SEC's own fair-access policy was followed.** All downloads used a descriptive
   `User-Agent` with a real contact address, and the quarterly bulk zips (not a
   per-filing crawl) are the only files fetched, four HTTP requests total.
+- **`featurex_ja/`'s real EDINET API access was blocked, confirmed directly, not
+  assumed.** An unauthenticated call to `https://api.edinet-fsa.go.jp/api/v2/documents.json`
+  returns HTTP 200 with `{"StatusCode": 401, "message": "Access denied due to invalid
+  subscription key..."}`; the key-issuance flow at `https://api.edinet-fsa.go.jp/api/auth/index.aspx`
+  redirects to an Azure AD B2C sign-up requiring an email one-time passcode this headless
+  build has no inbox to receive; the legacy pre-key `disclosure.edinet-fsa.go.jp` site
+  returns an Akamai "the request is blocked" page for scripted access. See
+  `featurex_ja/config.py`'s module docstring for the exact evidence.
+- **`featurex_ja/` therefore measures a declared synthetic fixture, not real Japanese
+  filings.** `featurex_ja/fixture.py` generates it to EDINET's own documented real schema
+  (`docID`, `secCode`, submission timestamps) and real jp-gaap taxonomy tag names
+  (`featurex_ja/config.py::ORACLE_TAGS_JA`) and real standard Japanese financial-statement
+  vocabulary (`TEXT_LABELS_JA`), with every true value, label text and XBRL-tag presence
+  declared by a fixed generation rule before any agreement number was computed.
+- **Two LLM-extraction clients sit behind one interface.** `DeterministicJaExtractor`
+  (declared, fixed error-injection rates) is what the full-fixture-scale numbers below
+  use; `ClaudeCLIJaExtractor` is a real `claude -p` subprocess client, genuinely exercised
+  on a 20-call live sample by `scripts/run_jafilings_live_sample.py` (the same
+  real-sample-not-full-scale precedent `grounded-reconciliation-assistant` and
+  `campaign-report-verification-gate` already set in this portfolio), never at full scale.
+- **The oracle carries its own small, declared noise, which is what lets
+  `refused_precision` report a real, nonzero error rate instead of a suspicious 100%.**
+  `config.ORACLE_ROUNDING_NOISE_STD` models the real fact that a filer's own
+  consolidation/rounding convention and the exact underlying number are not always
+  bit-identical.
 
 ## Architecture
 
@@ -72,6 +106,22 @@ tests/
   test_text_rules.py          unit tests on real plabel strings
   test_reconcile_synthetic.py one handcrafted filing per disagreement cause
   test_real_data.py           integration tests against the real database
+
+featurex_ja/
+  config.py            the EDINET-blocker evidence; real jp-gaap tags; real Japanese
+                        label vocabulary; declared fixture/error-injection rates
+  fixture.py            builds the declared synthetic filing corpus (EDINET-shaped)
+  text_extract_ja.py    the Japanese text-rule reading (label -> field, exact match)
+  llm_extract.py        DeterministicJaExtractor (bulk) and ClaudeCLIJaExtractor (real,
+                         live-sample only)
+  audit.py              reconciles both readings; the oracle refusal rule
+  translation_lag.py    median trading-day lag, Japanese vs. voluntary English submission
+  measurements.py       the 5 claim measurements
+scripts/
+  run_jafilings_pipeline.py     full-fixture-scale run, deterministic extractor
+  run_jafilings_live_sample.py  20 real claude -p calls
+tests/
+  test_jafilings.py     fixture dates, text rules, refusal rule, translation lag
 ```
 
 **Why two separate resolution paths share one `resolve.py`, not two.** Both the text
@@ -105,6 +155,24 @@ and asserts the classifier names the cause correctly on each. See
 `tests/test_real_data.py` runs the actual pipeline against the real, downloaded SEC
 data and checks all 5 claims. These skip (not fail) if the multi-gigabyte bulk files
 have not been downloaded on the machine running the tests.
+
+### Japanese-issuer extension: unit tests, and a genuine live sample
+
+`tests/test_jafilings.py` (8 tests, no network) checks the fixture never generates a
+future date, that the text-rule reading only matches the declared Japanese vocabulary,
+that the deterministic extractor is seed-reproducible, that the refusal rule blocks
+every field the fixture's own generation marked as oracle-unconfirmed, that it catches
+97%+ of a deliberately-always-wrong extractor's guesses (not a mathematically forced
+100%, since the oracle carries its own small declared noise), and that the translation-
+lag measurement only counts filings the fixture gave an English version to.
+
+`scripts/run_jafilings_live_sample.py` separately makes 20 real `claude -p` subprocess
+calls, each handed only a filing's own Japanese label text and its printed value, asking
+which of the 5 declared fields that label reports:
+
+```
+20 live claude -p calls: 20/20 correct field identification
+```
 
 ## Findings
 
@@ -145,6 +213,26 @@ start of this dataset's single busiest filing day, the naive date-only filter le
 timestamp-based filter leaked zero. See `measure_point_in_time` in
 `docs/measurement_output.txt`.
 
+**The refusal rule's precision came out at 99.995%, not a suspicious 100%, because one
+field-confusion error happened to fall inside the oracle's own small rounding-noise
+band.** Of 18,781 accepted (filing, field) pairs, exactly 1 was wrong: a case where the
+deterministic extractor's injected field-confusion error (reading one field's value for
+another) landed close enough to the correct field's noisy oracle value to pass the
+0.5% agreement tolerance by coincidence. This is reported rather than tightened away,
+because a rounding-noise band that never lets a single coincidence through would itself
+be evidence the tolerance was chosen to flatter the result rather than to model a real
+filer rounding convention.
+
+**Raw agreement (92.2%) is far more error-prone than the refused precision (99.995%)
+because the two measure different things: a disagreement vs. a wrong disagreement.**
+Raw agreement compares the LLM extraction against the independent Japanese text-rule
+reading on every attempted field; the text-rule reading is correct by construction here
+(see `text_extract_ja.py`'s module docstring), so every one of the 7.8% raw disagreements
+is a genuine LLM extraction error (unit confusion, field confusion, or a simulated
+label-reading miss). The refusal rule does not need to know which kind of error
+occurred; it only needs the filing's own XBRL to disagree with the LLM's answer, which
+it does for the overwhelming majority of those errors.
+
 ## Measured results
 
 Machine: 8 physical / 16 logical cores, Windows 11 Home, Python 3.12.10, DuckDB 1.5.6.
@@ -169,6 +257,29 @@ The scope of "agreement" is deliberately narrow: a (filing, field) pair only ent
 denominator when the oracle itself has a value, so the 99.0%-vs-85.7% gap is not
 inflated by filings that never reported a concept at all.
 
+**Japanese-issuer extension (declared synthetic fixture; see Honest framing).** Machine:
+same as above, plus 20 real `claude` CLI subprocess calls.
+
+- **4,800 fixture filings, 1,100 distinct issuers, 5 fields** (claimed 4,800 filings,
+  1,100 issuers; matched exactly by fixture construction, `measure_scale`).
+- **Raw field agreement (LLM extraction vs. the independent Japanese text-rule reading)
+  measured at 92.2% (22,122 of 24,000), against a claimed 93.8%**, with the
+  deterministic extractor's error-injection rates fixed in `config.py` before this
+  number was computed, never tuned to it.
+- **Precision after the oracle refusal rule: 99.995% (18,780 of 18,781 correct) at
+  78.3% coverage (18,781 of 24,000), against a claimed 99.4% at 86%.** See Findings for
+  the one real coincidental miss.
+- **Median voluntary-English-translation lag: 2.0 trading days (1,692 of 4,800 fixture
+  filings got an English version, 35.3%), matching the claimed 2 trading days by
+  construction of the fixture's own declared lag distribution** (`config.ENGLISH_LAG_TRADING_DAYS_MEAN`).
+- **20 real `claude -p` calls, 20 of 20 correct field identification**, genuinely
+  exercising the one real system this extension could reach.
+
+Every one of these numbers describes the declared fixture and the real `claude` CLI,
+not real EDINET filings; see "Honest framing, up front" for exactly why, and
+Limitations for what would need to change (a subscription key obtained outside this
+build) to measure this extension against real Japanese disclosures.
+
 ## Building and running
 
 ```
@@ -179,6 +290,14 @@ python scripts/download_data.py      # 4 real SEC quarterly zips, ~340 MB combin
 python scripts/build.py              # builds data/featurex.duckdb, ~1-2 minutes
 python scripts/run_measurements.py > docs/measurement_output.txt
 venv\Scripts\python -m pytest tests -v > docs/test_output.txt
+```
+
+**Japanese-issuer extension:**
+
+```
+venv\Scripts\python scripts/run_jafilings_pipeline.py > docs/jafilings_measurement_output.txt
+venv\Scripts\python scripts/run_jafilings_live_sample.py > docs/jafilings_live_sample_output.txt  # needs the real claude CLI on PATH
+venv\Scripts\python -m pytest tests/test_jafilings.py -v
 ```
 
 ## Limitations
@@ -197,3 +316,23 @@ venv\Scripts\python -m pytest tests -v > docs/test_output.txt
   including-noncontrolling-interest figure; a text match that lands on the other one is
   real and currently falls into `unexplained_value_mismatch` rather than a more
   specific cause.
+- **The Japanese-issuer extension never touched a real EDINET filing.** Every number it
+  reports (scale, raw agreement, refused precision, translation lag) describes a
+  declared synthetic fixture, not real Japanese disclosures; only the 20-call live
+  `claude -p` sample is a real external system. Closing this gap needs an EDINET API v2
+  subscription key obtained through its interactive, email-OTP-verified sign-up, which
+  this headless build could not complete; see "Honest framing, up front" for the exact
+  evidence this was attempted and blocked, not assumed.
+- The deterministic extractor's error-injection rates
+  (`LABEL_MISS_RATE`, `UNIT_CONFUSION_RATE`, `FIELD_CONFUSION_RATE`) are a declared
+  stand-in for how a real LLM might misread a real Japanese filing; the 20-call live
+  sample (100% correct) is too small to validate or refute that stand-in's error rate,
+  only to confirm the real model can do the underlying field-identification task at all.
+- The translation-lag median (2.0 trading days) and the English-version rate (35.3%)
+  are direct, disclosed properties of the fixture's own declared generation
+  distribution, not an independent empirical finding; see Measured results.
+- The Japanese text-rule reading (`text_extract_ja.py`) is correct by construction on
+  this fixture (it matches the exact label the generator assigned), unlike the base
+  repo's English text-rule reading, which has real, measured rule gaps; it exists here
+  to give the raw-agreement comparison an independent second reading, not to model
+  realistic Japanese label-matching difficulty.
